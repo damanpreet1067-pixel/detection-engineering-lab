@@ -1,0 +1,34 @@
+title: PowerShell Launched With Encoded Command
+id: 49ba5cc6-1ede-4638-8df1-e73093680b89
+status: experimental
+description: Detects PowerShell started with an encoded command
+references:
+    - https://attack.mitre.org/techniques/T1059/001/
+author: Damanpreet
+date: 2026-10-08
+tags:
+    - attack.execution
+    - attack.t1059.001
+
+logsource:
+    category: process_creation
+    product: windows
+
+detection:
+    selection_img:
+        Image|endswith:
+            - '\powershell.exe'
+            - '\pwsh.exe'
+    selection_cli:
+        CommandLine|contains:
+            - ' -e '
+            - ' -en '
+            - ' -enc '
+            - ' -ec '
+            - ' -encodedcommand'
+    condition: selection_img and selection_cli
+
+falsepositives:
+    - Software deployment tools and legitimate administrative scripts
+
+level: medium

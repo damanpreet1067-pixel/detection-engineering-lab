@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Detection Engineering Dashboard</title>
+<style>
+  :root{color-scheme:light;--bg:#f1f5fb;--panel:#ffffff;--panel2:#f6f8fc;--line:#d5dded;--text:#14213d;--muted:#5a6a86;--cyan:#0d8f84;--blue:#2c5fd6;--green:#17804f;--amber:#a8680b;--red:#cf3a4b;--purple:#7b4bc9}
+  *{box-sizing:border-box} body{margin:0;background:radial-gradient(1000px 500px at 80% -10%,#dbe7fb 0,transparent 60%),var(--bg);color:var(--text);font:15px/1.5 Inter,Segoe UI,system-ui,-apple-system,sans-serif}
+  .app{max-width:1250px;margin:auto;padding:32px 22px 46px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:28px}.brand{display:flex;align-items:center;gap:13px}.logo{width:45px;height:45px;border-radius:14px;background:linear-gradient(145deg,#14b8a6,#3b6fe0);display:grid;place-items:center;color:#fff;font-weight:900;font-size:22px;box-shadow:0 8px 24px #0d8f8440}.eyebrow{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--cyan);font-weight:800}.brand h1{font-size:22px;line-height:1.15;margin:3px 0 0;letter-spacing:-.025em}.localtag{font-size:12px;color:var(--muted);border:1px solid var(--line);background:#ffffffe6;padding:8px 11px;border-radius:999px;white-space:nowrap}
+  .hero{display:grid;grid-template-columns:1.35fr .65fr;gap:18px;margin-bottom:18px}.hero-main,.hero-side,.panel,.metric{background:linear-gradient(160deg,#ffffff,#f7f9fd);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 28px #1f2f5a14}.hero-main{padding:27px}.hero h2{font-size:clamp(25px,4vw,36px);line-height:1.12;letter-spacing:-.04em;margin:10px 0 13px;max-width:720px}.hero p{margin:0;color:var(--muted);max-width:760px}.hero-side{padding:22px;display:flex;flex-direction:column;justify-content:space-between;gap:20px}.status-line{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--green);font-weight:700}.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 5px #17804f16}.small-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:750}.big-number{font-size:38px;line-height:1.05;letter-spacing:-.04em;font-weight:800;margin-top:5px}.split{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:18px}.metric{padding:18px 19px}.metric .label{color:var(--muted);font-size:12px}.metric .value{font-size:29px;font-weight:800;letter-spacing:-.04em;margin:6px 0 1px}.metric .hint{font-size:11px;color:var(--muted)}
+  .section-head{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:29px 0 13px}.section-head h2{font-size:19px;margin:0;letter-spacing:-.02em}.section-head p{font-size:12px;color:var(--muted);margin:3px 0 0}.cases{display:grid;grid-template-columns:1fr 1fr;gap:15px}.case{padding:21px}.case-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.case h3{margin:8px 0 4px;font-size:18px}.case p{margin:0;color:var(--muted);font-size:13px}.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:5px 9px;font-size:11px;color:#34466b;white-space:nowrap}.pill.good{border-color:#9fd8bb;background:#e4f6ec;color:var(--green)}.pill.info{border-color:#a9c0f0;background:#e6eefc;color:var(--blue)}.pill.warn{border-color:#e3c783;background:#fdf3d9;color:var(--amber)}.tech{font-size:11px;color:var(--cyan);font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-top:18px}.file{font:12px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere;background:#eef3fb;border:1px solid #d5dded;padding:9px 10px;border-radius:9px;color:#2a3d66;margin-top:11px}.case-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.meta-box{background:#f4f7fc;border:1px solid #e1e7f2;border-radius:10px;padding:11px}.meta-box span{display:block;font-size:11px;color:var(--muted)}.meta-box b{display:block;font-size:13px;margin-top:3px}
+  .panel{padding:21px;margin-top:16px}.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:15px 0}.tab{background:#f1f5fb;color:var(--muted);border:1px solid var(--line);padding:9px 13px;border-radius:10px;font:inherit;font-size:12px;cursor:pointer}.tab.active{background:#dfe9fb;border-color:#8fb0ec;color:#14306b;font-weight:700}.tab:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:left;padding:13px 12px;border-bottom:1px solid #e1e7f2;font-size:13px}th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800}tbody tr:last-child td{border-bottom:0}.num{font-weight:800;font-variant-numeric:tabular-nums}.zero{color:var(--green)}.positive{color:var(--amber)}.track{width:100%;height:8px;background:#e0e7f3;border-radius:999px;overflow:hidden;margin-top:6px}.bar{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--cyan))}.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.result-card{border:1px solid #d9e1ee;background:#f6f9fe;border-radius:12px;padding:15px}.result-card .title{font-weight:750;font-size:13px}.result-card .desc{color:var(--muted);font-size:12px;margin-top:4px}.result-card .state{font-size:24px;letter-spacing:-.04em;font-weight:850;margin-top:13px}.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-top:15px}.step{border:1px solid var(--line);background:#f6f9fe;border-radius:11px;padding:13px 11px;min-height:100px}.step .n{color:var(--cyan);font-size:11px;font-weight:850;letter-spacing:.08em}.step b{display:block;font-size:12px;margin:7px 0 4px}.step span{display:block;font-size:11px;color:var(--muted);line-height:1.4}.footer{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--line);padding-top:16px;margin-top:28px;color:var(--muted);font-size:11px}.notice{background:#fdf4dd;border:1px solid #e6cd8b;color:#6b4a0b;padding:12px 14px;border-radius:11px;font-size:12px;margin-top:15px}.hide{display:none!important}
+  @media(max-width:850px){.hero{grid-template-columns:1fr}.split{grid-template-columns:repeat(2,1fr)}.cases{grid-template-columns:1fr}.timeline{grid-template-columns:repeat(2,1fr)}.timeline .step:last-child{grid-column:span 2}}
+  @media(max-width:500px){.app{padding:19px 13px 32px}.topbar{align-items:flex-start;flex-direction:column}.hero-main{padding:22px}.split{gap:9px}.metric{padding:14px}.metric .value{font-size:25px}.case-meta,.result-grid{grid-template-columns:1fr}.footer{flex-direction:column}.timeline{grid-template-columns:1fr}.timeline .step:last-child{grid-column:auto}}
+
+  /* interactive additions */
+  code{font:12px ui-monospace,SFMono-Regular,Consolas,monospace;background:#eef3fb;border:1px solid #d5dded;border-radius:6px;padding:1px 6px;color:#2a3d66}
+  .sub{color:var(--muted);font-size:12.5px;margin:4px 0 14px;max-width:760px}
+  .field label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:700}
+  textarea,select,input[type=file]{width:100%;background:#eef3fb;border:1px solid #d5dded;border-radius:10px;color:var(--text);font:12.5px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;padding:11px 12px}
+  select{font-family:inherit;font-size:13px}
+  textarea{min-height:92px;resize:vertical}
+  textarea:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+  .chips{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+  .chip{background:#f1f5fb;color:#2a3d66;border:1px solid var(--line);padding:7px 11px;border-radius:999px;font:inherit;font-size:12px;cursor:pointer}
+  .chip:hover{border-color:#8fb0ec}
+  .actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  .btn{background:linear-gradient(145deg,#14b8a6,#3b6fe0);color:#fff;border:0;border-radius:10px;padding:10px 18px;font:inherit;font-weight:800;font-size:13px;cursor:pointer}
+  .btn.ghost{background:#f1f5fb;color:var(--muted);border:1px solid var(--line);font-weight:600}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .hint-key{font-size:11px;color:var(--muted)}
+  .result3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+  .state.hit{color:var(--cyan)} .state.miss{color:var(--muted)}
+  .checks{list-style:none;margin:12px 0 0;padding:0;font-size:12px}
+  .checks li{padding:3px 0}.checks .ok{color:var(--green)}.checks .no{color:var(--muted)}
+  .form-row{display:grid;grid-template-columns:1fr 1fr 1.6fr;gap:12px}
+  .loader{border-top:1px solid var(--line);margin-top:22px;padding-top:18px}
+  .loader h3{margin:0;font-size:16px}
+  .preview{margin-top:14px}
+  .preview table{min-width:0}
+  .preview .events{margin-top:12px;max-height:260px;overflow:auto;border:1px solid #d5dded;border-radius:10px}
+  .preview .cmd{font:11.5px ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere;color:#2a3d66}
+  .notice.err{background:#fdebed;border-color:#e8a3ac;color:#8f2131}
+  .notice.ok{background:#e4f6ec;border-color:#9fd8bb;color:#14573a}
+  .src{font-size:11px;color:var(--muted)}
+  @media(max-width:850px){.result3,.form-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">⌁</div><div><div class="eyebrow">Security validation workspace</div><h1>Detection Engineering</h1></div></div>
+    <div class="localtag">LOCAL SUMMARY · TWO USE CASES</div>
+  </header>
+  <section class="hero">
+    <div class="hero-main">
+      <div class="eyebrow">Project overview</div>
+      <h2>From simulated behavior to tested detections.</h2>
+      <p>A compact view of your ATT&amp;CK-mapped use cases, Sigma rules, Sysmon evidence, Chainsaw results, and scheduled-task rule tuning.</p>
+    </div>
+    <div class="hero-side">
+      <div class="status-line"><span class="dot"></span> Evidence and report files recorded</div>
+      <div><div class="small-label">Repository</div><div style="font-weight:750;margin-top:5px;overflow-wrap:anywhere">C:\DetectionEngineering</div></div>
+      <div><div class="small-label">Validation approach</div><div style="color:var(--muted);font-size:13px;margin-top:5px">Sysmon EVTX + Sigma rules + Chainsaw</div></div>
+    </div>
+  </section>
+  <section class="split" aria-label="Project metrics">
+    <div class="metric"><div class="label">ATT&amp;CK use cases</div><div class="value">02</div><div class="hint">T1059.001 and T1053.005</div></div>
+    <div class="metric"><div class="label">Sigma rules validated</div><div class="value">03</div><div class="hint">Syntax validation: 3 of 3</div></div>
+    <div class="metric"><div class="label">Tuned rule · Atomic test</div><div class="value" id="m-atomic">1</div><div class="hint" id="m-atomic-hint">Detection observed</div></div>
+    <div class="metric"><div class="label">Tuned rule · benign test</div><div class="value" id="m-benign">0</div><div class="hint" id="m-benign-hint">Detections on isolated evidence</div></div>
+  </section>
+
+  <div class="section-head"><div><h2>Use cases</h2><p>Rules and evidence currently in your local repository</p></div><span class="pill good">2 documented</span></div>
+  <section class="cases">
+    <article class="panel case" style="margin-top:0">
+      <div class="case-top"><span class="pill info">ATT&amp;CK · T1059.001</span><span class="pill good">Detection observed</span></div>
+      <div class="tech">Execution</div><h3>Encoded PowerShell</h3><p>Detects PowerShell process launches with encoded-command indicators.</p>
+      <div class="file">sigma\T1059.001_encoded_powershell.yml</div>
+      <div class="case-meta"><div class="meta-box"><span>Log evidence</span><b>Sysmon EVTX</b></div><div class="meta-box"><span>Benign check</span><b>Get-Process</b></div></div>
+      <div class="notice">The tested benign command did not meet this rule's encoded-command conditions. This was a limited benign test, not a broad false-positive-rate measurement.</div>
+    </article>
+    <article class="panel case" style="margin-top:0">
+      <div class="case-top"><span class="pill info">ATT&amp;CK · T1053.005</span><span class="pill good">Rule tuned and tested</span></div>
+      <div class="tech">Persistence</div><h3>Scheduled Task Creation</h3><p>Detects a selected scheduled-task creation pattern and tests whether the rule is overly broad.</p>
+      <div class="file">sigma\T1053.005_scheduled_task.yml</div><div class="file">sigma\T1053.005_scheduled_task_tuned.yml</div>
+      <div class="case-meta"><div class="meta-box"><span>Atomic test</span><b>Test #14 · ProactiveScan</b></div><div class="meta-box"><span>Benign task</span><b>BenignDetectionTest</b></div></div>
+    </article>
+  </section>
+
+  <section class="panel" id="tester">
+    <div class="section-head" style="margin-top:0"><div><h2>Test a command line</h2><p>Paste a process command line and see which rules would match</p></div><span class="pill warn">Simulated logic</span></div>
+    <p class="sub">This checks the text against JavaScript versions of your rule conditions. It approximates the Sigma YAML; Chainsaw on real EVTX remains the source of truth.</p>
+    <div class="field"><label for="cmd">Process command line</label>
+      <textarea id="cmd" spellcheck="false" placeholder='schtasks.exe /create /tn "Task" /tr "wscript.exe C:\Temp\run.vbs" /sc onlogon'></textarea></div>
+    <div class="chips" id="chips" aria-label="Example command lines"></div>
+    <div class="actions"><button class="btn" id="runTest" type="button">Test command line</button><button class="btn ghost" id="clearTest" type="button">Clear</button><span class="hint-key">Ctrl + Enter also runs the test</span></div>
+    <div id="testOut" aria-live="polite"></div>
+  </section>
+
+  <section class="panel" id="comparison">
+    <div class="section-head" style="margin-top:0"><div><h2>Rule tuning comparison</h2><p>Counts reported for the specific evidence files tested</p></div><span class="pill good" id="dataState">Recorded results</span></div>
+    <div class="tabs" role="tablist" aria-label="Comparison views">
+      <button class="tab active" role="tab" aria-selected="true" data-view="benign">Benign evidence</button>
+      <button class="tab" role="tab" aria-selected="false" data-view="atomic">Atomic Red Team evidence</button>
+    </div>
+    <div id="view-benign" class="table-wrap">
+      <table><thead><tr><th>Rule</th><th>Detections</th><th>Interpretation</th></tr></thead><tbody id="tbody-benign"></tbody></table>
+      <div class="result-grid" style="margin-top:15px"><div class="result-card"><div class="title">Original rule</div><div class="track"><div class="bar" id="bar-benign-original" style="width:100%"></div></div><div class="desc">Broad match: schtasks.exe plus /create</div></div><div class="result-card"><div class="title">Tuned rule</div><div class="track"><div class="bar" id="bar-benign-tuned" style="width:0%"></div></div><div class="desc">Narrower match: /create + /sc onlogon + wscript.exe</div></div></div>
+      <div class="notice" id="verdict-benign"></div>
+    </div>
+    <div id="view-atomic" class="table-wrap hide">
+      <table><thead><tr><th>Rule</th><th>Detections</th><th>Interpretation</th></tr></thead><tbody id="tbody-atomic"></tbody></table>
+      <div class="notice" id="verdict-atomic"></div>
+      <div class="notice">These counts describe the specific tested artifacts only. One successful test does not prove detection of every scheduled-task technique.</div>
+    </div>
+
+    <div class="loader">
+      <h3>Load Chainsaw results</h3>
+      <p class="sub">Run Chainsaw for one rule at a time, for example <code>chainsaw hunt evidence.evtx -s sigma/rule.yml --mapping mappings/sigma-event-logs-all.yml --json -o results.json</code>. Then choose where the result belongs and load the file. An empty result file counts as 0 detections.</p>
+      <div class="form-row">
+        <div class="field"><label for="selSet">Evidence set</label><select id="selSet"><option value="benign">Benign evidence</option><option value="atomic">Atomic Red Team evidence</option></select></div>
+        <div class="field"><label for="selRule">Rule used</label><select id="selRule"><option value="original">Original scheduled-task rule</option><option value="tuned">Tuned scheduled-task rule</option></select></div>
+        <div class="field"><label for="file">Chainsaw JSON file</label><input type="file" id="file" accept=".json,.jsonl,.txt,application/json"></div>
+      </div>
+      <div class="actions"><button class="btn" id="apply" type="button" disabled>Apply to comparison</button><button class="btn ghost" id="reset" type="button">Reset to recorded results</button></div>
+      <div class="preview" id="preview" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="section-head" style="margin-top:0"><div><h2>Detection workflow</h2><p>How the components work together</p></div></div>
+    <div class="timeline">
+      <div class="step"><div class="n">01 / MAP</div><b>MITRE ATT&amp;CK</b><span>Choose and classify the behavior.</span></div>
+      <div class="step"><div class="n">02 / TEST</div><b>Atomic Red Team</b><span>Generate controlled test activity.</span></div>
+      <div class="step"><div class="n">03 / COLLECT</div><b>Sysmon</b><span>Capture system telemetry in EVTX.</span></div>
+      <div class="step"><div class="n">04 / DETECT</div><b>Sigma + Chainsaw</b><span>Apply rules to saved event logs.</span></div>
+      <div class="step"><div class="n">05 / IMPROVE</div><b>Benign test + tuning</b><span>Record matches, limitations and refinements.</span></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="section-head" style="margin-top:0"><div><h2>Project files checklist</h2><p>Use this while presenting the local repository</p></div></div>
+    <div class="result-grid">
+      <div class="result-card"><div class="title">Sigma rules</div><div class="desc">3 rule files · validation passed 3/3</div></div>
+      <div class="result-card"><div class="title">Test evidence</div><div class="desc">Sysmon EVTX files for both use cases and benign scheduled-task test</div></div>
+      <div class="result-card"><div class="title">Test documentation</div><div class="desc">Atomic test reports for T1059.001 and T1053.005</div></div>
+      <div class="result-card"><div class="title">Reports</div><div class="desc">README, detection-results.md, and false-positive analysis reports</div></div>
+    </div>
+    <div class="notice"><b>Important:</b> Results shown on load are the ones you recorded. Chainsaw files you load stay in this browser tab only and reset on reload; nothing is uploaded anywhere. The dashboard does not run Chainsaw itself, and the command-line tester uses simulated rule logic.</div>
+  </section>
+  <footer class="footer"><span>Detection Engineering Repository · Presentation dashboard</span><span>Local file · No external services required</span></footer>
+</div>
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- Tabs ---------- */
+function showView(v){
+  document.querySelectorAll('.tab').forEach(b=>{const on=b.dataset.view===v;b.classList.toggle('active',on);b.setAttribute('aria-selected',on)});
+  $('#view-benign').classList.toggle('hide',v!=='benign');
+  $('#view-atomic').classList.toggle('hide',v!=='atomic');
+}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
+
+/* ---------- 1. Command-line tester (simulated rule logic) ---------- */
+const FLAG=(()=>{const w='encodedcommand',p=['ec'];for(let i=1;i<=w.length;i++)p.push(w.slice(0,i));
+  return new RegExp('(?:^|\\s)[-/](?:'+p.join('|')+')\\s+[A-Za-z0-9+/=]{10,}','i');})();
+const CREATE=c=>/(?:^|\s)[\/-]create(?:\s|$)/i.test(c);
+const RULES=[
+  {name:'Original scheduled-task rule',conds:[
+    ['Image is schtasks.exe',c=>/schtasks(\.exe)?(?=["'\s]|$)/i.test(c)],
+    ['Command line contains /create',CREATE]]},
+  {name:'Tuned scheduled-task rule',conds:[
+    ['Command line contains /create',CREATE],
+    ['Command line contains /sc onlogon',c=>/(?:^|\s)[\/-]sc\s+onlogon/i.test(c)],
+    ['Command line contains wscript.exe',c=>/wscript(\.exe)?/i.test(c)]]},
+  {name:'Encoded PowerShell',conds:[
+    ['PowerShell process',c=>/(?:powershell|pwsh)(\.exe)?/i.test(c)],
+    ['Encoded-command flag with Base64 argument',c=>FLAG.test(c)]]}
+];
+const EXAMPLES=[
+  ['Task: onlogon + wscript','schtasks.exe /create /tn "ProactiveScan" /tr "wscript.exe C:\\Temp\\run.vbs" /sc onlogon'],
+  ['Task: benign daily','schtasks.exe /create /tn "BenignDetectionTest" /tr "notepad.exe" /sc daily /st 09:00'],
+  ['Encoded PowerShell','powershell.exe -NoProfile -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAKQ=='],
+  ['Get-Process (benign)','powershell.exe -Command Get-Process']
+];
+EXAMPLES.forEach(([label,cmd])=>{
+  const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=label;
+  b.addEventListener('click',()=>{$('#cmd').value=cmd;runTest();});
+  $('#chips').appendChild(b);
+});
+function runTest(){
+  const c=$('#cmd').value.trim(),out=$('#testOut');
+  if(!c){out.innerHTML='<div class="notice" style="margin-top:16px">Enter a command line first, or pick an example above.</div>';return;}
+  const res=RULES.map(r=>{const checks=r.conds.map(([l,f])=>({l,ok:f(c)}));return{name:r.name,checks,hit:checks.every(x=>x.ok)}});
+  let insight='';
+  if(res[0].hit&&!res[1].hit)insight='The original rule matches this command but the tuned rule does not. This is the kind of broad match the tuning removes.';
+  else if(res[0].hit&&res[1].hit)insight='Both scheduled-task rules match this command.';
+  else if(!res[0].hit&&!res[2].hit)insight='None of the rules match this command.';
+  out.innerHTML='<div class="result3">'+res.map(r=>
+    '<div class="result-card"><div class="title">'+esc(r.name)+'</div><div class="state '+(r.hit?'hit':'miss')+'">'+(r.hit?'Matched':'No match')+'</div><ul class="checks">'+
+    r.checks.map(x=>'<li class="'+(x.ok?'ok':'no')+'"><span aria-hidden="true">'+(x.ok?'\u2713':'\u2717')+'</span> '+esc(x.l)+': '+(x.ok?'found':'missing')+'</li>').join('')+
+    '</ul></div>').join('')+'</div>'+(insight?'<div class="notice" style="background:#e6eefc;border-color:#a9c0f0;color:#1f3f8a">'+esc(insight)+'</div>':'');
+}
+$('#runTest').addEventListener('click',runTest);
+$('#clearTest').addEventListener('click',()=>{$('#cmd').value='';$('#testOut').innerHTML='';$('#cmd').focus();});
+$('#cmd').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')runTest();});
+
+/* ---------- 2. Comparison table driven by data ---------- */
+const RECORDED={benign:{original:3,tuned:0},atomic:{original:1,tuned:1}};
+const NOTES={
+  benign:{original:'Matched three benign task-creation process events',tuned:'Did not match the isolated benign-task evidence'},
+  atomic:{original:'Detection observed on the selected Atomic test evidence',tuned:'Detection retained for the selected Atomic test evidence'}};
+const LABEL={original:'Original scheduled-task rule',tuned:'Tuned scheduled-task rule'};
+let data,source;
+function resetData(){data=JSON.parse(JSON.stringify(RECORDED));source={benign:{original:null,tuned:null},atomic:{original:null,tuned:null}};}
+resetData();
+
+function render(){
+  ['benign','atomic'].forEach(set=>{
+    $('#tbody-'+set).innerHTML=['original','tuned'].map(rule=>{
+      const n=data[set][rule],src=source[set][rule];
+      const note=src?n+' detection'+(n===1?'':'s')+' in '+esc(src):NOTES[set][rule];
+      return '<tr><td>'+LABEL[rule]+'</td><td class="num '+(n>0?'positive':'zero')+'">'+n+'</td><td>'+note+(src?'<div class="src">Loaded from file</div>':'')+'</td></tr>';
+    }).join('');
+  });
+  const b=data.benign,a=data.atomic;
+  $('#bar-benign-original').style.width=(b.original>0?100:0)+'%';
+  $('#bar-benign-tuned').style.width=(b.original>0?Math.min(100,b.tuned/b.original*100):(b.tuned>0?100:0))+'%';
+  $('#verdict-benign').textContent=b.original>0
+    ? (b.tuned<=b.original
+        ? 'On this benign evidence the tuned rule matched '+b.tuned+' of the original rule\u2019s '+b.original+' events ('+Math.round(100*(b.original-b.tuned)/b.original)+'% fewer).'
+        : 'The tuned rule matched more benign events than the original rule. Check that the right files were loaded.')
+    : 'The original rule has no matches on this evidence, so there is no baseline to compare against.';
+  $('#verdict-atomic').textContent=a.tuned>0
+    ? 'The tuned rule still detects the Atomic test, so the tuning kept the true positive.'
+    : 'Warning: the tuned rule no longer detects the Atomic test. The tuning may be too narrow.';
+  $('#m-benign').textContent=b.tuned;
+  $('#m-benign-hint').textContent=b.tuned>0?'Matches on benign evidence':'Detections on isolated evidence';
+  $('#m-atomic').textContent=a.tuned;
+  $('#m-atomic-hint').textContent=a.tuned>0?'Detection observed':'No detection';
+  const loaded=['benign','atomic'].some(s=>source[s].original||source[s].tuned);
+  const pill=$('#dataState');pill.textContent=loaded?'Includes loaded results':'Recorded results';
+  pill.className='pill '+(loaded?'warn':'good');
+}
+render();
+
+/* ---------- 3. Chainsaw JSON loader ---------- */
+function parseChainsaw(text){
+  const t=text.trim();if(!t)return[];
+  let v;
+  try{v=JSON.parse(t)}catch(_){
+    v=[];t.split(/\r?\n/).forEach((line,i)=>{line=line.trim();if(!line)return;
+      try{v.push(JSON.parse(line))}catch(__){throw new Error('Line '+(i+1)+' is not valid JSON. Export with the --json option of chainsaw hunt.')}});
+  }
+  if(Array.isArray(v))return v;
+  if(v&&typeof v==='object'){for(const k of['detections','results','hits'])if(Array.isArray(v[k]))return v[k];return[v];}
+  throw new Error('This file does not look like Chainsaw JSON output.');
+}
+function ruleName(r){
+  if(!r||typeof r!=='object')return'Unnamed rule';
+  const rules=Array.isArray(r.rules)?r.rules.join(', '):r.rules;
+  for(const x of[r.name,r.rule,r.title,r.rule_name,r.hunt&&r.hunt.rule&&r.hunt.rule.title,rules])if(typeof x==='string'&&x)return x;
+  return'Unnamed rule';
+}
+function findKey(o,key,d){d=d||0;if(!o||typeof o!=='object'||d>8)return null;
+  if(Object.prototype.hasOwnProperty.call(o,key)&&typeof o[key]!=='object')return String(o[key]);
+  for(const k in o){const f=findKey(o[k],key,d+1);if(f!==null)return f}return null;}
+
+let pending=null;
+function showError(msg){pending=null;$('#apply').disabled=true;$('#preview').innerHTML='<div class="notice err" role="alert">'+esc(msg)+'</div>';}
+function showPreview(){
+  const recs=pending.recs,counts={};
+  recs.forEach(r=>{const n=ruleName(r);counts[n]=(counts[n]||0)+1});
+  let html='<div class="notice ok"><b>'+esc(pending.name)+'</b>: '+recs.length+' detection'+(recs.length===1?'':'s')+' found'+(recs.length?' across '+Object.keys(counts).length+' rule'+(Object.keys(counts).length===1?'':'s'):'')+'. Choose the evidence set and rule above, then apply.</div>';
+  if(recs.length){
+    html+='<div class="table-wrap" style="margin-top:12px"><table><thead><tr><th>Rule name in file</th><th>Detections</th></tr></thead><tbody>'+
+      Object.entries(counts).sort((x,y)=>y[1]-x[1]).map(([n,c])=>'<tr><td>'+esc(n)+'</td><td class="num">'+c+'</td></tr>').join('')+'</tbody></table></div>';
+    html+='<div class="events table-wrap"><table><thead><tr><th>Time</th><th>Rule</th><th>Host</th><th>Command line</th></tr></thead><tbody>'+
+      recs.slice(0,25).map(r=>'<tr><td>'+esc((r&&r.timestamp)||findKey(r,'SystemTime')||'')+'</td><td>'+esc(ruleName(r))+'</td><td>'+esc(findKey(r,'Computer')||'')+'</td><td class="cmd">'+esc((findKey(r,'CommandLine')||'').slice(0,240))+'</td></tr>').join('')+
+      '</tbody></table></div>'+(recs.length>25?'<p class="sub">Showing the first 25 of '+recs.length+' detections.</p>':'');
+  }
+  $('#preview').innerHTML=html;$('#apply').disabled=false;
+}
+$('#file').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{pending={name:f.name,recs:parseChainsaw(String(r.result))};showPreview();}catch(err){showError(err.message)}};
+  r.onerror=()=>showError('The file could not be read.');
+  r.readAsText(f);
+});
+$('#apply').addEventListener('click',()=>{
+  if(!pending)return;
+  const set=$('#selSet').value,rule=$('#selRule').value;
+  data[set][rule]=pending.recs.length;source[set][rule]=pending.name;
+  render();showView(set);
+  $('#preview').insertAdjacentHTML('afterbegin','<div class="notice ok" role="status">Applied: '+esc(LABEL[rule])+' on '+(set==='benign'?'benign':'Atomic Red Team')+' evidence is now '+pending.recs.length+'.</div>');
+  $('#comparison').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+});
+$('#reset').addEventListener('click',()=>{
+  resetData();pending=null;$('#file').value='';$('#apply').disabled=true;$('#preview').innerHTML='';render();
+});
+})();
+</script>
+</body>
+</html>
